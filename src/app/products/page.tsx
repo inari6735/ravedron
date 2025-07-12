@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Header, Footer } from '@/components';
 import { featuredProducts, navigationItems, footerSections } from '@/data';
@@ -18,6 +18,14 @@ const sortOptions = [
 const categories = ['All', 'Festival Gear', 'Rave Essentials', 'Accessories', 'Outerwear'];
 
 export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProductsContent />
+    </Suspense>
+  );
+}
+
+function ProductsContent() {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState('name-asc');
   const [selectedCategory, setSelectedCategory] = useState('All');
