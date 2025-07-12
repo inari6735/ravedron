@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 function SpinningModel() {
-  const { scene } = useGLTF(`${process.env.PUBLIC_URL || ''}/3d/t_shirt.glb`);
+  const { scene } = useGLTF('/3d/t_shirt.glb');
   const modelRef = useRef<Group>(null);
   
   // Clone the scene for each instance

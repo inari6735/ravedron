@@ -1,15 +1,13 @@
-import type { NextConfig } from "next";
+// @ts-check
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants'
 
-const nextConfig: NextConfig = {
-  output: 'export',
-  trailingSlash: true,
-  skipTrailingSlashRedirect: true,
-  distDir: 'dist',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/ravedron' : '',
-  basePath: process.env.NODE_ENV === 'production' ? '/ravedron' : '',
-  env: {
-    PUBLIC_URL: process.env.NODE_ENV === 'production' ? '/ravedron' : ''
+export default (phase: string) => {
+  const isDev = phase === PHASE_DEVELOPMENT_SERVER
+  /**
+   * @type {import('next').NextConfig}
+   */
+  const nextConfig = {
+    assetPrefix: isDev ? undefined : 'https://inari6735.github.io/ravedron',
   }
-};
-
-export default nextConfig;
+  return nextConfig
+}

@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "SHOPIK - Streetwear Redefined",
-  description: "Streetwear that breaks boundaries and defines rebellion",
+  title: "RAVEDRON - Rave Culture Shop",
+  description: "Rave style that breaks boundaries and defines rebellion",
 };
 
 export default function RootLayout({
