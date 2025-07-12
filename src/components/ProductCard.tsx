@@ -6,6 +6,7 @@ import { useGLTF } from '@react-three/drei';
 import { Product } from "@/types";
 import { Suspense, useRef, useMemo } from 'react';
 import { Group } from 'three';
+import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {
   product: Product;
@@ -37,8 +38,15 @@ function SpinningModel() {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addItem(product);
+  };
+
   return (
-<div className="group cursor-pointer bg-gray-900 border border-gray-800">
+    <div className="group cursor-pointer bg-gray-900 border border-gray-800 hover:border-red-500 transition-colors">
       <div className="relative overflow-hidden aspect-square">
         <Image
           src={product.image}
@@ -60,7 +68,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         <h3 className="text-white font-heading mb-1 text-lg">
           {product.name}
         </h3>
-        <p className="text-gray-400 text-sm">{product.price}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-gray-400 text-sm">{product.price}</p>
+          <button
+            onClick={handleAddToCart}
+            className="text-red-500 hover:text-red-400 text-xs font-medium tracking-wider"
+          >
+            + ADD
+          </button>
+        </div>
       </div>
     </div>
   );

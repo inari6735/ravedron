@@ -6,5 +6,8 @@ export { default as ProductCard } from './ProductCard';
 export { default as ProductGrid } from './ProductGrid';
 export { default as FeaturedCategories } from './FeaturedCategories';
 export { default as StoreInfo } from './StoreInfo';
+export { default as EventCard } from './EventCard';
+export { default as UpcomingEvents } from './UpcomingEvents';
+export { default as CartPopup } from './CartPopup';
 export { default as Newsletter } from './Newsletter';
 export { default as Footer } from './Footer';

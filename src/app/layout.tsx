@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from '@/contexts/CartContext';
+import { CartPopup } from '@/components';
 
-const inter = Inter({
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  variable: "--font-polysans",
-  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "RAVEDRON - Rave Culture Shop",
-  description: "Rave style that breaks boundaries and defines rebellion",
+  title: "SHOPIK - Underground Fashion",
+  description: "Underground fashion that breaks boundaries and defines rebellion",
 };
 
 export default function RootLayout({
@@ -20,10 +26,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} font-sans antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <CartProvider>
+          {children}
+          <CartPopup />
+        </CartProvider>
       </body>
     </html>
   );

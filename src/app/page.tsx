@@ -5,6 +5,7 @@ import {
   Hero,
   ProductGrid,
   FeaturedCategories,
+  UpcomingEvents,
   StoreInfo,
   Newsletter,
   Footer,
@@ -12,6 +13,7 @@ import {
 
 import {
   featuredProducts,
+  upcomingEvents,
   navigationItems,
   footerSections,
 } from "@/data";
@@ -25,6 +27,7 @@ export default function Home() {
       <Hero />
       <ProductGrid products={featuredProducts} />
       <FeaturedCategories />
+      <UpcomingEvents events={upcomingEvents} />
       <StoreInfo />
       <Newsletter />
       <Footer footerSections={footerSections} />
