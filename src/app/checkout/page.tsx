@@ -55,13 +55,15 @@ export default function CheckoutPage() {
 
       {/* Breadcrumbs */}
       <div className="px-6 py-4 lg:px-8 bg-gray-900 border-b border-gray-800">
-        <nav className="flex items-center space-x-2 text-sm">
-          <a href="/" className="text-gray-400 hover:text-white transition-colors">
-            Home
-          </a>
-          <span className="text-gray-600">/</span>
-          <span className="text-white font-medium">Checkout</span>
-        </nav>
+        <div className="max-w-7xl mx-auto">
+          <nav className="flex items-center space-x-2 text-sm">
+            <a href="/" className="text-gray-400 hover:text-white transition-colors">
+              Home
+            </a>
+            <span className="text-gray-600">/</span>
+            <span className="text-white font-medium">Checkout</span>
+          </nav>
+        </div>
       </div>
 
       <div className="px-6 py-12 lg:px-8">
