@@ -52,14 +52,14 @@ export default function EventCard({ event }: EventCardProps) {
   };
 
   return (
-    <div className="group bg-gray-900 border border-gray-800 overflow-hidden hover:border-red-500 transition-all duration-300">
+    <div className="group bg-gray-900 border border-gray-800 overflow-hidden hover:border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-2xl fade-in">
       <div className="relative">
         <div className="aspect-[2/1] relative overflow-hidden">
           <Image
             src={event.image}
             alt={event.title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-20 transition-all duration-300"></div>
           

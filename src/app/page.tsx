@@ -24,12 +24,25 @@ export default function Home() {
       <NotificationBar />
       <Header navigationItems={navigationItems} />
       <ScrollingTextBar />
-      <Hero />
-      <ProductGrid products={featuredProducts} />
-      <FeaturedCategories />
-      <UpcomingEvents events={upcomingEvents} />
-      <StoreInfo />
-      <Newsletter />
+      <div className="fade-in">
+        <Hero />
+      </div>
+        <div className="fade-in">
+            <ProductGrid products={featuredProducts} />
+        </div>
+
+      <div className="fade-in">
+        <FeaturedCategories />
+      </div>
+      <div className="slide-in">
+        <UpcomingEvents events={upcomingEvents} />
+      </div>
+      <div className="fade-in">
+        <StoreInfo />
+      </div>
+      <div className="fade-in">
+        <Newsletter />
+      </div>
       <Footer footerSections={footerSections} />
     </div>
   );

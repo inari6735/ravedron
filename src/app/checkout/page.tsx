@@ -77,7 +77,7 @@ export default function CheckoutPage() {
                 <h2 className="text-xl font-heading mb-4 text-white">Billing & Shipping Information</h2>
                 <div className="space-y-4">
                   <input
-                    className="w-full p-4 bg-gray-800 border border-gray-700 text-white placeholder-gray-500"
+                    className="w-full p-4 bg-gray-800 border border-gray-700 text-white placeholder-gray-500 transition-all duration-300 focus:ring-2 focus:ring-red-500 focus:border-red-500 hover:border-gray-600"
                     name="firstName"
                     type="text"
                     placeholder="First Name"
