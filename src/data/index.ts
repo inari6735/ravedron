@@ -56,13 +56,70 @@ export const featuredProducts: Product[] = [
     price: "$25.00",
     image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
     category: "Accessories"
+  },
+  {
+    id: 9,
+    name: "ELECTRO STORM JACKET",
+    price: "$150.00",
+    image: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400&h=400&fit=crop",
+    category: "Outerwear"
+  },
+  {
+    id: 10,
+    name: "RAVE WARRIOR BOOTS",
+    price: "$95.00",
+    image: "https://images.unsplash.com/photo-1608256246200-53e8b47b2206?w=400&h=400&fit=crop",
+    category: "Accessories"
+  },
+  {
+    id: 11,
+    name: "PULSE NATION TEE",
+    price: "$42.00",
+    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
+    category: "Festival Gear"
+  },
+  {
+    id: 12,
+    name: "DARK MATTER SHORTS",
+    price: "$65.00",
+    image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400&h=400&fit=crop",
+    category: "Rave Essentials"
+  },
+  {
+    id: 13,
+    name: "SYNTHETIC DREAMS HOODIE",
+    price: "$88.00",
+    image: "https://images.unsplash.com/photo-1574180566232-aaad1b5b8450?w=400&h=400&fit=crop",
+    category: "Rave Essentials"
+  },
+  {
+    id: 14,
+    name: "NEON CIRCUIT BACKPACK",
+    price: "$78.00",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    category: "Accessories"
+  },
+  {
+    id: 15,
+    name: "ACID HOUSE BOMBER",
+    price: "$135.00",
+    image: "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400&h=400&fit=crop",
+    category: "Outerwear"
+  },
+  {
+    id: 16,
+    name: "TECHNO FUTURE DRESS",
+    price: "$98.00",
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=400&fit=crop",
+    category: "Festival Gear"
   }
 ];
 
 export const navigationItems: NavigationItem[] = [
-  { name: "FESTIVAL GEAR", href: "#" },
-  { name: "RAVE ESSENTIALS", href: "#" },
-  { name: "ACCESSORIES", href: "#" },
+  { name: "ALL PRODUCTS", href: "/products" },
+  { name: "FESTIVAL GEAR", href: "/products?category=Festival+Gear" },
+  { name: "RAVE ESSENTIALS", href: "/products?category=Rave+Essentials" },
+  { name: "ACCESSORIES", href: "/products?category=Accessories" },
   { name: "EVENTS", href: "#" }
 ];
 
@@ -70,10 +127,11 @@ export const footerSections: FooterSection[] = [
   {
     title: "SHOP",
     links: [
-      { name: "Festival Gear", href: "#" },
-      { name: "Rave Essentials", href: "#" },
-      { name: "Accessories", href: "#" },
-      { name: "Limited Drops", href: "#" }
+      { name: "All Products", href: "/products" },
+      { name: "Festival Gear", href: "/products?category=Festival+Gear" },
+      { name: "Rave Essentials", href: "/products?category=Rave+Essentials" },
+      { name: "Accessories", href: "/products?category=Accessories" },
+      { name: "Outerwear", href: "/products?category=Outerwear" }
     ]
   },
   {

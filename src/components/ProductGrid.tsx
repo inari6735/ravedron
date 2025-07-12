@@ -21,6 +21,15 @@ export default function ProductGrid({ products }: ProductGridProps) {
   return (
     <section className="py-10 px-6 lg:px-8 bg-black">
       <div className="w-full">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-heading text-white">Featured Products</h2>
+          <a 
+            href="/products" 
+            className="text-red-500 hover:text-red-400 transition-colors font-medium text-sm tracking-wider"
+          >
+            VIEW ALL PRODUCTS →
+          </a>
+        </div>
         <div className="relative">
           <button 
             onClick={scrollLeft} 
