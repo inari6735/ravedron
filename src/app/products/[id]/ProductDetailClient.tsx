@@ -3,21 +3,10 @@
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import Image from 'next/image';
+import {Product} from "@/types";
 
 interface ProductDetailClientProps {
-  product: {
-    id: number;
-    name: string;
-    category: string;
-    price: string;
-    description?: string;
-    features?: string[];
-    sizes?: string[];
-    colors?: string[];
-    images?: string[];
-    image?: string;
-    inStock: boolean;
-  };
+  product: Product;
 }
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
