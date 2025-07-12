@@ -5,6 +5,7 @@ import {
   Hero,
   ProductGrid,
   FeaturedCategories,
+  StoreInfo,
   Newsletter,
   Footer,
 } from "@/components";
@@ -24,6 +25,7 @@ export default function Home() {
       <Hero />
       <ProductGrid products={featuredProducts} />
       <FeaturedCategories />
+      <StoreInfo />
       <Newsletter />
       <Footer footerSections={footerSections} />
     </div>

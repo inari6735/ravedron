@@ -60,7 +60,7 @@ export default function Footer({ footerSections }: FooterProps) {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p className="font-heading tracking-wider">&copy; 2025 SHOPIK. All rights reserved.</p>
+          <p className="font-heading tracking-wider">&copy; 2025 RAVEDRON. All rights reserved.</p>
         </div>
       </div>
     </footer>

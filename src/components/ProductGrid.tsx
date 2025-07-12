@@ -19,12 +19,12 @@ export default function ProductGrid({ products }: ProductGridProps) {
     };
 
   return (
-    <section className="py-20 px-6 lg:px-8 bg-black">
+    <section className="py-10 px-6 lg:px-8 bg-black">
       <div className="w-full">
         <div className="relative">
           <button 
             onClick={scrollLeft} 
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
+            className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -41,7 +41,7 @@ export default function ProductGrid({ products }: ProductGridProps) {
           </div>
           <button 
             onClick={scrollRight} 
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
+            className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
