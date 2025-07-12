@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 export default function Hero() {
+  const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
 
@@ -25,8 +26,8 @@ export default function Hero() {
           playsInline
           onLoadedData={() => setIsVideoLoaded(true)}
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
-          <source src="/hero-video.webm" type="video/webm" />
+          <source src={`${basePath}/hero-video.mp4`} type="video/mp4" />
+          <source src={`${basePath}/hero-video.webm`} type="video/webm" />
           {/* You can also use a placeholder video from the web */}
           <source src="https://www.youtube.com/watch?v=ujmEo-tFrsI&list=RDujmEo-tFrsI&start_radio=1" type="video/mp4" />
           {/* Fallback for browsers that don't support video */}

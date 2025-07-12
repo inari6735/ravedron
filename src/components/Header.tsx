@@ -6,16 +6,18 @@ interface HeaderProps {
 }
 
 export default function Header({ navigationItems }: HeaderProps) {
+  const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
+
   return (
     <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800">
       <nav className="relative flex items-center justify-between">
         <div className="flex items-center">
           <Image
-            src="/logo.png"
-            alt="SHOPIK Logo"
-            width={120}
-            height={40}
-            className="h-10 w-auto"
+              src={`${basePath}/logo.png`}
+              alt="SHOPIK Logo"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
           />
         </div>
         <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2">
