@@ -12,7 +12,9 @@ interface ProductCardProps {
 }
 
 function SpinningModel() {
-  const { scene } = useGLTF('/3d/t_shirt.glb');
+  // Use the correct path for GitHub Pages deployment
+  const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
+  const { scene } = useGLTF(`${basePath}/3d/t_shirt.glb`);
   const modelRef = useRef<Group>(null);
   
   // Clone the scene for each instance
