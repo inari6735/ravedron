@@ -1,6 +1,7 @@
 'use client'
 
 import Image from "next/image";
+import Link from "next/link";
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { Product } from "@/types";
@@ -46,28 +47,34 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group cursor-pointer bg-gray-900 border border-gray-800 hover:border-red-500 transition-colors">
-      <div className="relative overflow-hidden aspect-square">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover group-hover:opacity-0 transition-opacity duration-300"
-        />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-            <Suspense fallback={null}>
-              <SpinningModel />
-              <ambientLight intensity={0.5} />
-              <directionalLight position={[10, 10, 5]} intensity={1} />
-            </Suspense>
-          </Canvas>
+    <div className="group bg-gray-900 border border-gray-800 hover:border-red-500 transition-colors">
+      <Link href={`/products/${product.id}`}>
+        <div className="cursor-pointer">
+          <div className="relative overflow-hidden aspect-square">
+            <Image
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover group-hover:opacity-0 transition-opacity duration-300"
+            />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                <Suspense fallback={null}>
+                  <SpinningModel />
+                  <ambientLight intensity={0.5} />
+                  <directionalLight position={[10, 10, 5]} intensity={1} />
+                </Suspense>
+              </Canvas>
+            </div>
+          </div>
         </div>
-      </div>
+      </Link>
       <div className="p-4 bg-gray-800">
-        <h3 className="text-white font-heading mb-1 text-lg">
-          {product.name}
-        </h3>
+        <Link href={`/products/${product.id}`}>
+          <h3 className="text-white font-heading mb-1 text-lg hover:text-red-400 transition-colors cursor-pointer">
+            {product.name}
+          </h3>
+        </Link>
         <div className="flex items-center justify-between">
           <p className="text-gray-400 text-sm">{product.price}</p>
           <button

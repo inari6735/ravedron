@@ -6,7 +6,17 @@ export const featuredProducts: Product[] = [
     name: "BASS DROP TEE",
     price: "$45.00",
     image: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=400&h=400&fit=crop",
-    category: "Festival Gear"
+    category: "Festival Gear",
+    description: "Drop the bass with this premium cotton tee featuring underground-inspired graphics. Perfect for festivals, raves, and everyday street style. Made from 100% organic cotton with a comfortable regular fit.",
+    images: [
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=800&fit=crop",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=800&h=800&fit=crop"
+    ],
+    sizes: ["XS", "S", "M", "L", "XL", "XXL"],
+    colors: ["Black", "White", "Dark Gray"],
+    inStock: true,
+    features: ["100% Organic Cotton", "Regular Fit", "Pre-shrunk", "Machine Washable", "Underground Graphics"]
   },
   {
     id: 2,

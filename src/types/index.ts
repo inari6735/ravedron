@@ -4,6 +4,12 @@ export interface Product {
   price: string;
   image: string;
   category: string;
+  description?: string;
+  images?: string[];
+  sizes?: string[];
+  colors?: string[];
+  inStock?: boolean;
+  features?: string[];
 }
 
 export interface NavigationItem {
