@@ -8,7 +8,7 @@ interface HeaderProps {
 export default function Header({ navigationItems }: HeaderProps) {
   return (
     <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800">
-      <nav className="flex items-center justify-between">
+      <nav className="relative flex items-center justify-between">
         <div className="flex items-center">
           <Image
             src="/logo.png"
@@ -18,7 +18,7 @@ export default function Header({ navigationItems }: HeaderProps) {
             className="h-10 w-auto"
           />
         </div>
-        <div className="hidden md:flex space-x-10">
+        <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2">
           {navigationItems.map((item) => (
             <a
               key={item.name}

@@ -85,3 +85,13 @@ body {
 .animate-scroll {
   animation: scroll 30s linear infinite;
 }
+
+/* Hide scrollbar for product slider */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}

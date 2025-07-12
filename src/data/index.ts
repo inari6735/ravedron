@@ -28,6 +28,34 @@ export const featuredProducts: Product[] = [
     price: "$120.00",
     image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=400&fit=crop",
     category: "Outerwear"
+  },
+  {
+    id: 5,
+    name: "NEON NIGHTS TANK",
+    price: "$40.00",
+    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=400&fit=crop",
+    category: "Festival Gear"
+  },
+  {
+    id: 6,
+    name: "UNDERGROUND JOGGERS",
+    price: "$75.00",
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&h=400&fit=crop",
+    category: "Rave Essentials"
+  },
+  {
+    id: 7,
+    name: "LASER GRID HOODIE",
+    price: "$90.00",
+    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop",
+    category: "Rave Essentials"
+  },
+  {
+    id: 8,
+    name: "CYBER PUNK MASK",
+    price: "$25.00",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+    category: "Accessories"
   }
 ];
 
