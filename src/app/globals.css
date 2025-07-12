@@ -1,20 +1,87 @@
 @import "tailwindcss";
 
-/* PolySans Font - Using Inter as a professional alternative */
+/* Dark theme with sharp, edgy aesthetic */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --accent: #ff0000;
+  --secondary: #1a1a1a;
+  --border: #333333;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-polysans), 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Sharp edges and bold typography */
+.font-display {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.font-heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.font-body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/* Sharp button styles */
+.btn-sharp {
+  background: var(--foreground);
+  color: var(--background);
+  border: 2px solid transparent;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  transition: all 0.2s ease;
+}
+
+.btn-sharp:hover {
+  background: var(--background);
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+
+/* Sharp input styles */
+.input-sharp {
+  background: var(--secondary);
+  border: 2px solid var(--border);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.input-sharp:focus {
+  outline: none;
+  border-color: var(--foreground);
+  background: var(--background);
+}
+
+/* Infinite scrolling animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
 }

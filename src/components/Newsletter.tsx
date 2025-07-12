@@ -1,20 +1,20 @@
 export default function Newsletter() {
   return (
-    <section className="py-20 px-6 lg:px-8 bg-gray-900">
+    <section className="py-20 px-6 lg:px-8 bg-gray-900 border-t border-gray-800">
       <div className="max-w-2xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-4">
-          STAY IN THE CHAOS
+        <h2 className="font-display text-4xl mb-6 text-white tracking-wider">
+          JOIN THE UNDERGROUND
         </h2>
-        <p className="text-gray-300 mb-8">
-          Get exclusive access to drops, sales, and the latest chaos
+        <p className="font-heading text-gray-300 mb-8 text-lg tracking-wide">
+          GET EXCLUSIVE ACCESS TO NEW DROPS, FESTIVAL GEAR, AND UNDERGROUND EVENTS
         </p>
         <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
           <input
             type="email"
-            placeholder="Enter your email"
-            className="flex-1 px-4 py-3 bg-black border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-white"
+            placeholder="ENTER YOUR EMAIL"
+            className="input-sharp flex-1 px-6 py-4 placeholder-gray-500 text-white font-heading tracking-wider"
           />
-          <button className="bg-white text-black px-6 py-3 font-semibold hover:bg-gray-200 transition-colors">
+          <button className="btn-sharp px-8 py-4 text-sm font-bold tracking-widest">
             SUBSCRIBE
           </button>
         </div>

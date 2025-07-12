@@ -36,8 +36,8 @@ function SpinningModel() {
 
 export default function ProductCard({ product }: ProductCardProps) {
   return (
-    <div className="group cursor-pointer bg-white">
-      <div className="relative overflow-hidden bg-gray-200 aspect-square">
+<div className="group cursor-pointer bg-gray-900 border border-gray-800">
+      <div className="relative overflow-hidden aspect-square">
         <Image
           src={product.image}
           alt={product.name}
@@ -54,11 +54,11 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Canvas>
         </div>
       </div>
-      <div className="p-4 bg-black">
-        <h3 className="text-white font-medium mb-1 uppercase text-sm">
+      <div className="p-4 bg-gray-800">
+        <h3 className="text-white font-heading mb-1 text-lg">
           {product.name}
         </h3>
-        <p className="text-white text-sm">{product.price}</p>
+        <p className="text-gray-400 text-sm">{product.price}</p>
       </div>
     </div>
   );

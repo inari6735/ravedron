@@ -47,17 +47,17 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 text-center max-w-4xl mx-auto px-6">
-        <h1 className="text-6xl md:text-8xl font-bold mb-6 tracking-tight text-white drop-shadow-2xl">
+        <h1 className="font-display text-6xl md:text-8xl mb-6 text-white drop-shadow-2xl">
           RAVE
           <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
-            REDEFINED
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">
+            CULTURE
           </span>
         </h1>
-        <p className="text-xl md:text-2xl mb-8 text-white drop-shadow-lg">
-          Design that breaks boundaries and defines rebellion
+        <p className="font-heading text-xl md:text-2xl mb-8 text-gray-300 drop-shadow-lg tracking-wide">
+          UNDERGROUND FASHION FOR THE ELECTRONIC GENERATION
         </p>
-        <button className="bg-white text-black px-8 py-3 font-semibold hover:bg-gray-200 transition-colors shadow-lg">
+        <button className="btn-sharp px-12 py-4 text-lg font-bold tracking-widest shadow-2xl">
           SHOP NOW
         </button>
       </div>

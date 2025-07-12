@@ -1,4 +1,6 @@
+export { default as NotificationBar } from './NotificationBar';
 export { default as Header } from './Header';
+export { default as ScrollingTextBar } from './ScrollingTextBar';
 export { default as Hero } from './Hero';
 export { default as ProductCard } from './ProductCard';
 export { default as ProductGrid } from './ProductGrid';

@@ -1,5 +1,7 @@
 import {
+  NotificationBar,
   Header,
+  ScrollingTextBar,
   Hero,
   ProductGrid,
   FeaturedCategories,
@@ -16,7 +18,9 @@ import {
 export default function Home() {
   return (
     <div className="min-h-screen bg-black text-white">
+      <NotificationBar />
       <Header navigationItems={navigationItems} />
+      <ScrollingTextBar />
       <Hero />
       <ProductGrid products={featuredProducts} />
       <FeaturedCategories />
