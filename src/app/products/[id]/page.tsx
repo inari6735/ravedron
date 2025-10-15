@@ -37,7 +37,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Header navigationItems={navigationItems} />
+      <Header />
       
       {/* Breadcrumbs */}
       <div className="px-6 py-4 lg:px-8 bg-gray-900 border-b border-gray-800">

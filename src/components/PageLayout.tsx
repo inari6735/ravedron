@@ -26,7 +26,7 @@ export default function PageLayout({ children, showConnectionError = false }: Pa
   return (
     <div className="min-h-screen bg-black text-white">
       <NotificationBar />
-      <Header navigationItems={!isConnected ? navigationItems : undefined} />
+      <Header />
       <ScrollingTextBar />
       
       {/* Show connection status if there's an error and it's enabled */}

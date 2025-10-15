@@ -174,34 +174,38 @@ function ProductsContent() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => handleCategorySelect(null, 'All')}
+                className={`px-4 py-2 text-sm font-medium transition-colors ${
+                  !selectedCategoryId
+                    ? 'bg-red-500 text-white'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                ALL PRODUCTS
+              </button>
               {categoriesLoading ? (
-                <div className="text-gray-400">Loading categories...</div>
+                // Category loading skeletons
+                [...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-9 w-24 bg-gray-800 animate-pulse rounded"
+                  ></div>
+                ))
               ) : (
-                <>
+                categories.map((category) => (
                   <button
-                    onClick={() => handleCategorySelect(null, 'All')}
+                    key={category.id}
+                    onClick={() => handleCategorySelect(category.id!, category.name)}
                     className={`px-4 py-2 text-sm font-medium transition-colors ${
-                      !selectedCategoryId
+                      selectedCategoryId === category.id
                         ? 'bg-red-500 text-white'
                         : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                     }`}
                   >
-                    ALL PRODUCTS
+                    {category.name}
                   </button>
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => handleCategorySelect(category.id!, category.name)}
-                      className={`px-4 py-2 text-sm font-medium transition-colors ${
-                        selectedCategoryId === category.id
-                          ? 'bg-red-500 text-white'
-                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                      }`}
-                    >
-                      {category.name}
-                    </button>
-                  ))}
-                </>
+                ))
               )}
             </div>
 

@@ -79,16 +79,20 @@ NavigationItemComponent.displayName = 'NavigationItemComponent';
 
 export default function Header({ navigationItems: fallbackNavigation }: HeaderProps) {
   const { totalItems, openCart } = useCart();
-  const { data: categories = [], isLoading: loading, error } = useCategories();
+  const { data: categories = [], isLoading, error } = useCategories(); // React Query
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
 
   // Use Shopware categories if available, otherwise fallback to provided navigation
   const navigationItems = useMemo(() => {
-    return categories.length > 0 ? [
-      { name: "ALL PRODUCTS", href: "/products" },
-      ...categories
-    ] : fallbackNavigation || [];
+    if (categories.length > 0) {
+      return [
+        { name: "ALL PRODUCTS", href: "/products" },
+        ...categories
+      ];
+    }
+    // Only show fallback navigation if explicitly provided
+    return fallbackNavigation || [];
   }, [categories, fallbackNavigation]);
 
   return (
@@ -104,10 +108,16 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
           />
         </div>
         <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2" style={{ zIndex: 10002 }}>
-          {loading ? (
-            <div className="text-white text-sm tracking-wider">Loading...</div>
-          ) : error ? (
-            <div className="text-red-500 text-sm tracking-wider">Navigation unavailable</div>
+          {isLoading ? (
+            // Navigation loading skeletons
+            <div className="flex space-x-10">
+              {[...Array(5)].map((_, i) => (
+                <div
+                  key={i}
+                  className="h-4 w-20 bg-gray-800 animate-pulse rounded"
+                ></div>
+              ))}
+            </div>
           ) : (
             navigationItems.map((item) => (
               <NavigationItemComponent 

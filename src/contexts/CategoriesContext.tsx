@@ -1,51 +1,22 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import shopwareAPI from '@/services/shopware';
+import { createContext, useContext, ReactNode } from 'react';
 import { NavigationItem } from '@/types';
 
 interface CategoriesContextType {
   categories: NavigationItem[];
-  loading: boolean;
-  error: string | null;
-  refetch: () => void;
 }
 
 const CategoriesContext = createContext<CategoriesContextType | undefined>(undefined);
 
 interface CategoriesProviderProps {
   children: ReactNode;
+  categories: NavigationItem[]; // Server-side rendered categories
 }
 
-export function CategoriesProvider({ children }: CategoriesProviderProps) {
-  const [categories, setCategories] = useState<NavigationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await shopwareAPI.getCategories();
-      setCategories(data);
-    } catch (err) {
-      setError('Failed to fetch categories');
-      console.error('Categories fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const refetch = () => {
-    fetchCategories();
-  };
-
+export function CategoriesProvider({ children, categories }: CategoriesProviderProps) {
   return (
-    <CategoriesContext.Provider value={{ categories, loading, error, refetch }}>
+    <CategoriesContext.Provider value={{ categories }}>
       {children}
     </CategoriesContext.Provider>
   );

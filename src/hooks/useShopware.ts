@@ -17,8 +17,11 @@ export const useCategories = () => {
   return useQuery({
     queryKey: QUERY_KEYS.categories,
     queryFn: () => shopwareAPI.getCategories(),
-    staleTime: 10 * 60 * 1000, // 10 minutes - categories don't change often
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: 30 * 60 * 1000, // 30 minutes - categories don't change often
+    gcTime: 60 * 60 * 1000, // 1 hour
+    retry: 3,
+    refetchOnWindowFocus: false, // Don't refetch when switching tabs
+    refetchOnMount: false, // Don't refetch when component mounts if data exists
   });
 };
 

@@ -32,7 +32,13 @@ export default function CategoryProducts() {
           </button>
           
           {categoriesLoading ? (
-            <div className="text-gray-400">Loading categories...</div>
+            // Category loading skeletons
+            [...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="h-10 w-28 bg-gray-800 animate-pulse rounded"
+              ></div>
+            ))
           ) : (
             categories.map((category) => (
               <button
