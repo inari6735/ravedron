@@ -23,8 +23,8 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
   ] : fallbackNavigation || [];
 
   return (
-    <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800">
-      <nav className="relative flex items-center justify-between">
+    <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800" style={{ zIndex: 10000 }}>
+      <nav className="relative flex items-center justify-between" style={{ zIndex: 10001 }}>
         <div className="flex items-center">
           <Image
               src={`${basePath}/logo.png`}
@@ -34,7 +34,7 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
               className="h-10 w-auto"
           />
         </div>
-        <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2">
+        <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2" style={{ zIndex: 10002 }}>
           {loading ? (
             <div className="text-white text-sm tracking-wider">Loading...</div>
           ) : error ? (
@@ -43,13 +43,13 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
             navigationItems.map((item) => (
               <div
                 key={item.id || item.name}
-                className="relative"
-                onMouseEnter={() => item.children && setHoveredCategory(item.id || item.name)}
-                onMouseLeave={() => setHoveredCategory(null)}
+                className="relative group"
+                style={{ zIndex: 10003 }}
               >
                 <a
                   href={item.href}
                   className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider flex items-center"
+                  onMouseEnter={() => item.children && setHoveredCategory(item.id || item.name)}
                 >
                   {item.name}
                   {item.children && item.children.length > 0 && (
@@ -62,9 +62,14 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
                 {/* Dropdown menu */}
                 {item.children && item.children.length > 0 && hoveredCategory === (item.id || item.name) && (
                   <div 
-                    className="absolute top-full left-0 mt-1 w-48 bg-black border border-gray-700 rounded-md shadow-lg z-50"
+                    className="absolute top-full left-0 w-48 bg-black border border-gray-700 rounded-md shadow-lg"
                     onMouseEnter={() => setHoveredCategory(item.id || item.name)}
                     onMouseLeave={() => setHoveredCategory(null)}
+                    style={{
+                      marginTop: '0px', // Remove gap
+                      paddingTop: '4px', // Add padding to bridge the gap
+                      zIndex: 9999 // Ensure it's always on top
+                    }}
                   >
                     <div className="py-2">
                       {item.children.map((child) => (
@@ -78,6 +83,15 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
                       ))}
                     </div>
                   </div>
+                )}
+                
+                {/* Invisible bridge to prevent dropdown from disappearing */}
+                {item.children && item.children.length > 0 && hoveredCategory === (item.id || item.name) && (
+                  <div 
+                    className="absolute top-full left-0 w-48 h-1"
+                    onMouseEnter={() => setHoveredCategory(item.id || item.name)}
+                    style={{ zIndex: 9998 }}
+                  />
                 )}
               </div>
             ))

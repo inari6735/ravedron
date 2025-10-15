@@ -1,6 +1,6 @@
 export default function ScrollingTextBar() {
   return (
-    <div className="w-full bg-gray-800 border-y  py-3 overflow-hidden">
+    <div className="w-full bg-gray-800 border-y py-3 overflow-hidden relative" style={{ zIndex: 1 }}>
       <div className="flex whitespace-nowrap animate-scroll">
         <div className="flex items-center space-x-8 text-white font-heading text-sm tracking-widest">
           {/* Repeat the pattern multiple times to ensure smooth infinite scroll */}
