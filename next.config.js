@@ -32,6 +32,12 @@ const nextConfig = {
         port: '8000',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
     // Disable image optimization for development with localhost
     ...(process.env.NODE_ENV === 'development' && {

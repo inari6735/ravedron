@@ -149,7 +149,7 @@ class ShopwareAPI {
     // Get the main image
     const mainImage = shopwareProduct.cover?.media?.url || 
                      shopwareProduct.media?.[0]?.media?.url || 
-                     'https://via.placeholder.com/400x400?text=No+Image';
+                     '';
 
     // Get all images with null checks
     const images = shopwareProduct.media?.map(media => media.media?.url).filter(Boolean) || [mainImage];

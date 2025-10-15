@@ -3,6 +3,7 @@
 import { Product } from "@/types";
 import ProductCard from "./ProductCard";
 import { useProducts } from '@/hooks/useShopware';
+import { useRef } from 'react';
 
 interface ProductGridProps {
   products?: Product[]; // Made optional since we'll fetch from Shopware
@@ -10,20 +11,27 @@ interface ProductGridProps {
   limit?: number;
 }
 
-export default function ProductGrid({ products: fallbackProducts, title = "Featured Products", limit = 16 }: ProductGridProps) {
+export default function ProductGrid({ products: fallbackProducts, title = "Featured Products", limit = 8 }: ProductGridProps) {
   const { products: shopwareProducts, loading, error } = useProducts({ limit });
+  const sliderRef = useRef<HTMLDivElement>(null);
   
   // Use Shopware products if available, otherwise fallback to provided products
   const products = shopwareProducts.length > 0 ? shopwareProducts : fallbackProducts || [];
 
   const scrollLeft = () => {
-    const container = document.querySelector('.product-slider');
-    if (container) container.scrollBy({ left: -300, behavior: 'smooth' });
+    if (sliderRef.current) {
+      const cardWidth = sliderRef.current.children[0]?.clientWidth || 300;
+      const gap = 16; // 1rem gap
+      sliderRef.current.scrollBy({ left: -(cardWidth + gap) * 2, behavior: 'smooth' });
+    }
   };
 
   const scrollRight = () => {
-    const container = document.querySelector('.product-slider');
-    if (container) container.scrollBy({ left: 300, behavior: 'smooth' });
+    if (sliderRef.current) {
+      const cardWidth = sliderRef.current.children[0]?.clientWidth || 300;
+      const gap = 16; // 1rem gap
+      sliderRef.current.scrollBy({ left: (cardWidth + gap) * 2, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -61,32 +69,49 @@ export default function ProductGrid({ products: fallbackProducts, title = "Featu
             <p className="text-gray-400 text-lg">No products available</p>
           </div>
         ) : (
-          <div className="relative">
+          <div className="relative group">
+            {/* Left Arrow */}
             <button 
               onClick={scrollLeft} 
-              className="absolute -left-6 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 p-2 bg-black/80 border border-gray-700 text-white hover:bg-red-500 hover:border-red-500 transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100"
+              aria-label="Previous products"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            <div className="flex overflow-x-scroll space-x-4 scrollbar-hide product-slider pb-4">
-              <div className="flex space-x-4" style={{width: 'max-content'}}>
-                {products.map((product) => (
-                  <div key={product.id} className="flex-shrink-0" style={{width: 'calc(25% - 0.75rem)'}}>
-                    <ProductCard product={product} />
-                  </div>
-                ))}
-              </div>
+            
+            {/* Products Slider */}
+            <div 
+              ref={sliderRef}
+              className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
+              style={{ scrollSnapType: 'x mandatory' }}
+            >
+              {products.map((product) => (
+                <div 
+                  key={product.id} 
+                  className="flex-none w-72 sm:w-80 md:w-72 lg:w-80"
+                  style={{ scrollSnapAlign: 'start' }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))}
             </div>
+            
+            {/* Right Arrow */}
             <button 
               onClick={scrollRight} 
-              className="absolute -right-6 top-1/2 transform -translate-y-1/2 z-10 p-3 bg-white text-black hover:bg-gray-200 transition-colors focus:outline-none shadow-lg"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 p-2 bg-black/80 border border-gray-700 text-white hover:bg-red-500 hover:border-red-500 transition-all duration-300 opacity-0 group-hover:opacity-100 focus:opacity-100"
+              aria-label="Next products"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
+            
+            {/* Gradient overlays for better arrow visibility */}
+            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-black via-black/50 to-transparent pointer-events-none z-10" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black via-black/50 to-transparent pointer-events-none z-10" />
           </div>
         )}
       </div>

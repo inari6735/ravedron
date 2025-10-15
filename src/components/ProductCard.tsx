@@ -19,9 +19,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group bg-gray-900 border border-gray-800 hover:border-red-500 transition-colors">
+    <div className="bg-gray-900 border border-gray-800 hover:border-red-500 transition-colors">
       <Link href={`/products/${product.id}`}>
-        <div className="cursor-pointer">
+        <div className="cursor-pointer group">
           <div className="relative overflow-hidden aspect-square">
             <SafeImage
               src={product.image}
