@@ -2,8 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Header, Footer } from '@/components';
-import { navigationItems, footerSections } from '@/data';
+import { PageLayout } from '@/components';
 import { Product } from '@/types';
 import ProductCard from '@/components/ProductCard';
 import { useProducts, useCategories } from '@/hooks/useShopware';
@@ -86,8 +85,7 @@ function ProductsContent() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Header navigationItems={navigationItems} />
+    <PageLayout>
       
       {/* Breadcrumbs */}
       <div className="px-6 py-4 lg:px-8 bg-gray-900 border-b border-gray-800">
@@ -206,7 +204,6 @@ function ProductsContent() {
         </div>
       </div>
 
-      <Footer footerSections={footerSections} />
-    </div>
+    </PageLayout>
   );
 }

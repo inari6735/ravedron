@@ -1,8 +1,7 @@
 'use client'
 
-import { Header, Footer } from '@/components';
+import { PageLayout } from '@/components';
 import { useCart } from '@/contexts/CartContext';
-import { navigationItems, footerSections } from '@/data';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -16,8 +15,7 @@ export default function CartPage() {
   const total = subtotal + shippingCost + taxes;
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Header navigationItems={navigationItems} />
+    <PageLayout>
       
       {/* Breadcrumbs */}
       <div className="px-6 py-4 lg:px-8 bg-gray-900 border-b border-gray-800">
@@ -172,7 +170,6 @@ export default function CartPage() {
         </div>
       </div>
 
-      <Footer footerSections={footerSections} />
-    </div>
+    </PageLayout>
   );
 }
