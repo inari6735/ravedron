@@ -7,7 +7,6 @@ import {
   Hero,
   ProductGrid,
   FeaturedCategories,
-  UpcomingEvents,
   StoreInfo,
   Newsletter,
   Footer,
@@ -15,7 +14,6 @@ import {
 
 
 import {
-  upcomingEvents,
   navigationItems,
   footerSections,
 } from "@/data";
@@ -55,9 +53,6 @@ export default function Home() {
       </div>
       <div className="fade-in">
         <FeaturedCategories />
-      </div>
-      <div className="slide-in">
-        <UpcomingEvents events={upcomingEvents} />
       </div>
       <div className="fade-in">
         <StoreInfo />
