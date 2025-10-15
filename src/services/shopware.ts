@@ -39,14 +39,32 @@ class ShopwareAPI {
   async getCategories(): Promise<NavigationItem[]> {
     try {
       const response = await this.api.post('category', {
+        limit: 100, // Maximum allowed by Shopware
         includes: {
-          category: ['id', 'name', 'translated', 'level', 'path', 'children', 'seoUrls', 'active', 'visible']
+          category: ['id', 'name', 'translated', 'level', 'path', 'children', 'seoUrls', 'active', 'visible', 'parentId', 'childCount']
+        },
+        associations: {
+          children: {
+            limit: 100,
+            associations: {
+              children: {
+                limit: 100
+              }
+            }
+          }
+        },
+        filter: {
+          'category.active': true,
+          'category.visible': true
         }
       });
 
       const categories: ShopwareCategory[] = response.data.elements || response.data.data || [];
+      console.log('Raw categories from Shopware:', categories.map(cat => ({ id: cat.id, name: cat.name, level: cat.level, children: cat.children?.length || 0 })));
+      
       return this.transformCategoriesToNavigation(categories);
     } catch (error) {
+      console.error('Error fetching categories:', error);
       return [];
     }
   }
@@ -132,14 +150,56 @@ class ShopwareAPI {
    */
   private transformCategoriesToNavigation(categories: ShopwareCategory[]): NavigationItem[] {
     const filtered = categories.filter(cat => cat.active && cat.visible);
+    console.log('All categories:', filtered.map(cat => ({ 
+      id: cat.id, 
+      name: cat.name, 
+      level: cat.level, 
+      parentId: (cat as any).parentId
+    })));
     
-    return filtered.map(category => ({
-      id: category.id,
-      name: (category.translated?.name || category.name).toUpperCase(),
-      href: `/products?category=${category.id}`,
-      children: category.children ? this.transformCategoriesToNavigation(category.children) : undefined,
-      shopwareCategory: category
-    }));
+    // Only show level 2 categories in main navigation
+    const level2Categories = filtered.filter(cat => cat.level === 2);
+    const categoryMap = new Map<string, NavigationItem>();
+    
+    // Create navigation items for level 2 categories
+    level2Categories.forEach(category => {
+      const navItem: NavigationItem = {
+        id: category.id,
+        name: (category.translated?.name || category.name).toUpperCase(),
+        href: `/products?category=${category.id}`,
+        children: [],
+        shopwareCategory: category
+      };
+      categoryMap.set(category.id, navItem);
+    });
+    
+    // Find children for level 2 categories (level 3+ with parentId matching level 2)
+    const childCategories = filtered.filter(cat => cat.level > 2);
+    childCategories.forEach(category => {
+      const parentId = (category as any).parentId;
+      const parentNavItem = categoryMap.get(parentId);
+      
+      if (parentNavItem) {
+        const childNavItem: NavigationItem = {
+          id: category.id,
+          name: (category.translated?.name || category.name).toUpperCase(),
+          href: `/products?category=${category.id}`,
+          shopwareCategory: category
+        };
+        parentNavItem.children!.push(childNavItem);
+      }
+    });
+    
+    // Clean up empty children arrays
+    const rootCategories = Array.from(categoryMap.values());
+    rootCategories.forEach(item => {
+      if (item.children && item.children.length === 0) {
+        delete item.children;
+      }
+    });
+    
+    console.log('Built navigation hierarchy:', rootCategories);
+    return rootCategories;
   }
 
   /**

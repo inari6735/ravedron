@@ -4,6 +4,7 @@ import Image from "next/image";
 import { NavigationItem } from "@/types";
 import { useCart } from '@/contexts/CartContext';
 import { useCategories } from '@/hooks/useShopware';
+import { useState } from 'react';
 
 interface HeaderProps {
   navigationItems?: NavigationItem[]; // Made optional since we'll fetch from Shopware
@@ -12,6 +13,7 @@ interface HeaderProps {
 export default function Header({ navigationItems: fallbackNavigation }: HeaderProps) {
   const { totalItems, openCart } = useCart();
   const { categories, loading, error } = useCategories();
+  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
 
   // Use Shopware categories if available, otherwise fallback to provided navigation
@@ -39,13 +41,45 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
             <div className="text-red-500 text-sm tracking-wider">Navigation unavailable</div>
           ) : (
             navigationItems.map((item) => (
-              <a
+              <div
                 key={item.id || item.name}
-                href={item.href}
-                className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider"
+                className="relative"
+                onMouseEnter={() => item.children && setHoveredCategory(item.id || item.name)}
+                onMouseLeave={() => setHoveredCategory(null)}
               >
-                {item.name}
-              </a>
+                <a
+                  href={item.href}
+                  className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider flex items-center"
+                >
+                  {item.name}
+                  {item.children && item.children.length > 0 && (
+                    <svg className="ml-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </a>
+                
+                {/* Dropdown menu */}
+                {item.children && item.children.length > 0 && hoveredCategory === (item.id || item.name) && (
+                  <div 
+                    className="absolute top-full left-0 mt-1 w-48 bg-black border border-gray-700 rounded-md shadow-lg z-50"
+                    onMouseEnter={() => setHoveredCategory(item.id || item.name)}
+                    onMouseLeave={() => setHoveredCategory(null)}
+                  >
+                    <div className="py-2">
+                      {item.children.map((child) => (
+                        <a
+                          key={child.id || child.name}
+                          href={child.href}
+                          className="block px-4 py-2 text-sm text-white hover:text-red-500 hover:bg-gray-900 transition-colors tracking-wider"
+                        >
+                          {child.name}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ))
           )}
         </div>
