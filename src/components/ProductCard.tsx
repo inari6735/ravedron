@@ -2,41 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Canvas, useFrame } from '@react-three/fiber';
-import { useGLTF } from '@react-three/drei';
 import { Product } from "@/types";
-import { Suspense, useRef, useMemo } from 'react';
-import { Group } from 'three';
 import { useCart } from '@/contexts/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
-function SpinningModel() {
-  // Use the correct path for GitHub Pages deployment
-  const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
-  const { scene } = useGLTF(`${basePath}/3d/t_shirt.glb`);
-  const modelRef = useRef<Group>(null);
-  
-  // Clone the scene for each instance
-  const clonedScene = useMemo(() => scene.clone(), [scene]);
-
-  useFrame((state) => {
-    if (modelRef.current) {
-      modelRef.current.rotation.y += 0.01;
-    }
-  });
-
-  return (
-    <primitive 
-      ref={modelRef} 
-      object={clonedScene} 
-      scale={[3, 3, 3]}
-      position={[0, -3.75, 0]}
-    />
-  );
-}
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCart();
@@ -55,17 +27,9 @@ export default function ProductCard({ product }: ProductCardProps) {
               src={product.image}
               alt={product.name}
               fill
-              className="object-cover group-hover:opacity-0 transition-opacity duration-300"
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
             />
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-                <Suspense fallback={null}>
-                  <SpinningModel />
-                  <ambientLight intensity={0.5} />
-                  <directionalLight position={[10, 10, 5]} intensity={1} />
-                </Suspense>
-              </Canvas>
-            </div>
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
       </Link>
