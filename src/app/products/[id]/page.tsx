@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react';
-import { Header, Footer } from '@/components';
-import { navigationItems, footerSections } from '@/data';
+import { PageLayout } from '@/components';
 import { notFound } from 'next/navigation';
 import { useProduct } from '@/hooks/useShopware';
 import ProductDetailClient from './ProductDetailClient';
@@ -15,30 +14,35 @@ interface ProductDetailPageProps {
 
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [resolvedParams, setResolvedParams] = React.useState<{ id: string } | null>(null);
-  const { product, loading, error } = useProduct(resolvedParams?.id || '');
+  const { data: product, isLoading, error } = useProduct(resolvedParams?.id || null);
   
   React.useEffect(() => {
     params.then(setResolvedParams);
   }, [params]);
   
-  if (loading || !resolvedParams) {
+  // Show loading only when actually loading or params not resolved
+  if (isLoading || !resolvedParams) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-xl">Loading product...</div>
+      <PageLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"></div>
+            <div className="text-xl text-white">Loading product...</div>
+            <div className="text-gray-400 mt-2">Fetching product details from Shopware</div>
+          </div>
         </div>
-      </div>
+      </PageLayout>
     );
   }
   
-  if (error || !product) {
+  // Only show not found if there's actually an error OR if loading is complete but no product
+  if (error || (!isLoading && !product)) {
+    console.log('Product not found - Error:', error, 'Product:', product, 'Loading:', isLoading);
     notFound();
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Header />
-      
+    <PageLayout>
       {/* Breadcrumbs */}
       <div className="px-6 py-4 lg:px-8 bg-gray-900 border-b border-gray-800">
         <div className="max-w-7xl mx-auto">
@@ -57,8 +61,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
       </div>
 
       <ProductDetailClient product={product} />
-
-      <Footer footerSections={footerSections} />
-    </div>
+    </PageLayout>
   );
 }

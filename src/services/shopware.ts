@@ -130,17 +130,44 @@ class ShopwareAPI {
    */
   async getProduct(productId: string): Promise<Product | null> {
     try {
+      console.log('Fetching single product with ID:', productId);
+      
+      // Shopware Store API only accepts POST for single product endpoint
       const response = await this.api.post(`product/${productId}`, {
         includes: {
-          product: ['id', 'name', 'productNumber', 'description', 'translated', 'calculatedPrice', 'cover', 'media', 'categories', 'stock', 'available', 'properties'],
+          product: ['id', 'name', 'productNumber', 'description', 'translated', 'calculatedPrice', 'cover', 'media', 'categories', 'stock', 'availableStock', 'available', 'properties'],
           product_media: ['id', 'media', 'position'],
-          media: ['id', 'url', 'alt', 'title']
+          media: ['id', 'url', 'alt', 'title'],
+          category: ['id', 'name', 'translated']
+        },
+        associations: {
+          categories: {},
+          cover: {
+            media: {}
+          },
+          media: {
+            media: {}
+          }
         }
       });
 
-      const product: ShopwareProduct = response.data.data;
-      return this.transformProduct(product);
+      console.log('Single product API response:', response.data);
+      
+      // Handle the nested product structure from single product endpoint
+      const product: ShopwareProduct = response.data.product || response.data.data || response.data;
+      
+      if (!product) {
+        console.log('No product data found in response');
+        return null;
+      }
+      
+      console.log('Raw product from Shopware:', product);
+      const transformed = this.transformProduct(product);
+      console.log('Transformed product:', transformed);
+      
+      return transformed;
     } catch (error) {
+      console.error('Error fetching single product:', error);
       return null;
     }
   }
@@ -206,36 +233,72 @@ class ShopwareAPI {
    * Transform Shopware product to frontend product
    */
   private transformProduct = (shopwareProduct: ShopwareProduct): Product => {
+    if (!shopwareProduct) {
+      console.error('transformProduct called with null/undefined product');
+      throw new Error('Product data is required');
+    }
+    
+    console.log('Transforming product:', {
+      id: shopwareProduct.id,
+      name: shopwareProduct.name,
+      translated: shopwareProduct.translated,
+      calculatedPrice: shopwareProduct.calculatedPrice,
+      available: shopwareProduct.available,
+      availableStock: shopwareProduct.availableStock
+    });
+    
     // Get the main image
     const mainImage = shopwareProduct.cover?.media?.url || 
                      shopwareProduct.media?.[0]?.media?.url || 
                      '';
 
-    // Get all images with null checks
-    const images = shopwareProduct.media?.map(media => media.media?.url).filter(Boolean) || [mainImage];
+    // Get all images with null checks - filter out null media objects
+    const validMedia = shopwareProduct.media?.filter(media => media.media?.url) || [];
+    const images = validMedia.map(media => media.media!.url).filter(Boolean);
+    
+    // If no valid images found, use mainImage as fallback
+    const finalImages = images.length > 0 ? images : (mainImage ? [mainImage] : []);
 
-    // Format price
-    const price = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD', // You might want to make this dynamic based on Shopware currency
-    }).format(shopwareProduct.calculatedPrice.unitPrice);
+    // Format price safely
+    let price = '$0.00';
+    try {
+      if (shopwareProduct.calculatedPrice?.unitPrice) {
+        price = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(shopwareProduct.calculatedPrice.unitPrice);
+      }
+    } catch (priceError) {
+      console.error('Error formatting price:', priceError);
+    }
 
     // Get primary category
-    const primaryCategory = shopwareProduct.categories?.[0]?.translated?.name || 'Uncategorized';
+    const primaryCategory = shopwareProduct.categories?.[0]?.translated?.name || 
+                           shopwareProduct.categories?.[0]?.name || 
+                           'Uncategorized';
 
-    return {
+    // Safe name extraction
+    const name = shopwareProduct.translated?.name || shopwareProduct.name || 'Unknown Product';
+    
+    // Safe description extraction  
+    const description = shopwareProduct.translated?.description || shopwareProduct.description || '';
+
+    const transformedProduct: Product = {
       id: shopwareProduct.id,
-      name: shopwareProduct.translated.name,
+      name,
       price,
       image: mainImage,
-      images,
+      images: finalImages,
       category: primaryCategory,
-      description: shopwareProduct.translated.description,
-      inStock: shopwareProduct.available && shopwareProduct.availableStock > 0,
-      productNumber: shopwareProduct.productNumber,
-      stock: shopwareProduct.availableStock,
+      description,
+      inStock: Boolean(shopwareProduct.available && (shopwareProduct.availableStock || 0) > 0),
+      productNumber: shopwareProduct.productNumber || '',
+      stock: shopwareProduct.availableStock || 0,
       shopwareProduct
     };
+    
+    console.log('Final transformed product:', transformedProduct);
+    return transformedProduct;
   };
 
   /**
