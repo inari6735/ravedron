@@ -28,6 +28,7 @@ function ProductsContent() {
   const [sortBy, setSortBy] = useState('name-asc');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedCategoryName, setSelectedCategoryName] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
   
   // Fetch data from Shopware
   const { categories, loading: categoriesLoading } = useCategories();
@@ -36,15 +37,50 @@ function ProductsContent() {
     limit: 50
   });
 
+  // Helper function to find category recursively
+  const findCategoryById = (categories: any[], categoryId: string): any => {
+    for (const category of categories) {
+      if (category.id === categoryId) {
+        return category;
+      }
+      if (category.children) {
+        const found = findCategoryById(category.children, categoryId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  // Helper function to get category breadcrumb path
+  const getCategoryPath = (categories: any[], categoryId: string): any[] => {
+    for (const category of categories) {
+      if (category.id === categoryId) {
+        return [category];
+      }
+      if (category.children) {
+        const childPath = getCategoryPath(category.children, categoryId);
+        if (childPath.length > 0) {
+          return [category, ...childPath];
+        }
+      }
+    }
+    return [];
+  };
+
   // Handle URL parameters for category filtering
   useEffect(() => {
     const categoryParam = searchParams.get('category');
     if (categoryParam && categories.length > 0) {
-      const category = categories.find(cat => cat.id === categoryParam);
+      const category = findCategoryById(categories, categoryParam);
       if (category) {
         setSelectedCategoryId(categoryParam);
         setSelectedCategoryName(category.name);
+        setSelectedCategory(category);
       }
+    } else {
+      setSelectedCategoryId(null);
+      setSelectedCategoryName('All');
+      setSelectedCategory(null);
     }
   }, [searchParams, categories]);
 
@@ -95,7 +131,20 @@ function ProductsContent() {
               Home
             </a>
             <span className="text-gray-600">/</span>
-            <span className="text-white font-medium">Products</span>
+            <a href="/products" className="text-gray-400 hover:text-white transition-colors">
+              Products
+            </a>
+            {selectedCategory && (() => {
+              const categoryPath = getCategoryPath(categories, selectedCategory.id);
+              return categoryPath.map((cat, index) => (
+                <div key={cat.id} className="flex items-center space-x-2">
+                  <span className="text-gray-600">/</span>
+                  <span className={index === categoryPath.length - 1 ? "text-white font-medium" : "text-gray-400"}>
+                    {cat.name}
+                  </span>
+                </div>
+              ));
+            })()}
           </nav>
         </div>
       </div>

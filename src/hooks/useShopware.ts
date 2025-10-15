@@ -1,32 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import shopwareAPI from '@/services/shopware';
-import { Product, NavigationItem } from '@/types';
+import { Product } from '@/types';
 
-// Hook for fetching categories
-export const useCategories = () => {
-  const [categories, setCategories] = useState<NavigationItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await shopwareAPI.getCategories();
-        setCategories(data);
-      } catch (err) {
-        setError('Failed to fetch categories');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  return { categories, loading, error };
-};
+// Re-export useCategories from context for convenience
+export { useCategories } from '@/contexts/CategoriesContext';
 
 // Hook for fetching products
 export const useProducts = (params?: {

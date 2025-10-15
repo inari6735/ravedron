@@ -1,8 +1,7 @@
 'use client'
 
-import { PageLayout } from '@/components';
+import { PageLayout, SafeImage } from '@/components';
 import { useCart } from '@/contexts/CartContext';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function CartPage() {
@@ -67,11 +66,12 @@ export default function CartPage() {
                   {items.map((item) => (
                     <div key={item.id} className="flex items-center space-x-6 p-6 bg-gray-900 border border-gray-800">
                       <div className="w-24 h-24 relative">
-                        <Image
+                        <SafeImage
                           src={item.product.image}
                           alt={item.product.name}
-                          fill
-                          className="object-cover"
+                          width={96}
+                          height={96}
+                          className="object-cover w-full h-full"
                         />
                       </div>
                       

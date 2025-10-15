@@ -1,8 +1,8 @@
 'use client'
 
 import { useCart } from '@/contexts/CartContext';
-import Image from 'next/image';
 import Link from 'next/link';
+import { SafeImage } from '@/components';
 
 export default function CartPopup() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, totalPrice } = useCart();
@@ -53,11 +53,12 @@ export default function CartPopup() {
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-800 border border-gray-700">
                     <div className="w-16 h-16 relative">
-                      <Image
+                      <SafeImage
                         src={item.product.image}
                         alt={item.product.name}
-                        fill
-                        className="object-cover"
+                        width={64}
+                        height={64}
+                        className="object-cover w-full h-full"
                       />
                     </div>
                     
