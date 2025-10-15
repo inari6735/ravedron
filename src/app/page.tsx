@@ -13,7 +13,6 @@ import {
   Footer,
 } from "@/components";
 
-import ShopwareTest from '@/components/ShopwareTest';
 
 import {
   upcomingEvents,
@@ -50,8 +49,6 @@ export default function Home() {
         <Hero />
       </div>
       
-      {/* Temporary API test component */}
-      <ShopwareTest />
       
       <div className="fade-in">
         <ProductGrid />

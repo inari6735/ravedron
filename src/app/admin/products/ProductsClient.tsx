@@ -37,13 +37,11 @@ export default function ProductsClient() {
   const handleDeleteProduct = (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       // TODO: Implement Shopware API delete
-      console.log('Delete product:', productId);
     }
   };
 
   const handleSaveProduct = (product: Product) => {
     // TODO: Implement Shopware API save/update
-    console.log('Save product:', product);
     setIsModalOpen(false);
     setEditingProduct(null);
   };

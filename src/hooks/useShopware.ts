@@ -17,7 +17,6 @@ export const useCategories = () => {
         setCategories(data);
       } catch (err) {
         setError('Failed to fetch categories');
-        console.error('Categories fetch error:', err);
       } finally {
         setLoading(false);
       }
@@ -50,7 +49,6 @@ export const useProducts = (params?: {
       setTotal(data.total);
     } catch (err) {
       setError('Failed to fetch products');
-      console.error('Products fetch error:', err);
     } finally {
       setLoading(false);
     }
@@ -87,7 +85,6 @@ export const useProduct = (productId: string | null) => {
         setProduct(data);
       } catch (err) {
         setError('Failed to fetch product');
-        console.error('Product fetch error:', err);
       } finally {
         setLoading(false);
       }
@@ -118,7 +115,6 @@ export const useProductSearch = () => {
       setProducts(data);
     } catch (err) {
       setError('Failed to search products');
-      console.error('Product search error:', err);
     } finally {
       setLoading(false);
     }
@@ -155,7 +151,6 @@ export const useProductsByCategory = (categoryId: string | null, limit = 25, pag
         setTotal(data.total);
       } catch (err) {
         setError('Failed to fetch products by category');
-        console.error('Products by category fetch error:', err);
       } finally {
         setLoading(false);
       }
@@ -185,7 +180,6 @@ export const useShopwareConnection = () => {
       } catch (err) {
         setIsConnected(false);
         setError('Failed to connect to Shopware API. Please check your configuration.');
-        console.error('Shopware connection error:', err);
       } finally {
         setLoading(false);
       }

@@ -40,7 +40,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Order submitted', { shippingAddress, paymentMethod, items });
+    // Process order submission
   };
 
   const shippingCost = 10.0;

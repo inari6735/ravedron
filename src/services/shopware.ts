@@ -24,22 +24,10 @@ class ShopwareAPI {
       }
     });
 
-    // Add request interceptor for debugging
-    this.api.interceptors.request.use(
-      (config) => {
-        console.log('Shopware API Request:', config.url);
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
-      }
-    );
-
     // Add response interceptor for error handling
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error('Shopware API Error:', error.response?.data || error.message);
         return Promise.reject(error);
       }
     );
@@ -50,23 +38,15 @@ class ShopwareAPI {
    */
   async getCategories(): Promise<NavigationItem[]> {
     try {
-      console.log('🔍 Fetching categories from Shopware...');
       const response = await this.api.post('category', {
         includes: {
           category: ['id', 'name', 'translated', 'level', 'path', 'children', 'seoUrls', 'active', 'visible']
         }
       });
 
-      console.log('📦 Raw categories response:', response.data);
       const categories: ShopwareCategory[] = response.data.elements || response.data.data || [];
-      console.log('📊 Categories count:', categories.length);
-      console.log('📋 Categories details:', categories.map(cat => ({ id: cat.id, name: cat.translated?.name || cat.name, level: cat.level, active: cat.active, visible: cat.visible })));
-      
-      const transformed = this.transformCategoriesToNavigation(categories);
-      console.log('🔄 Transformed navigation items:', transformed);
-      return transformed;
+      return this.transformCategoriesToNavigation(categories);
     } catch (error) {
-      console.error('❌ Error fetching categories:', error);
       return [];
     }
   }
@@ -81,7 +61,6 @@ class ShopwareAPI {
     search?: string;
   }): Promise<{ products: Product[]; total: number }> {
     try {
-      console.log('🔍 Fetching products from Shopware...', params);
       const payload: any = {
         limit: params?.limit || 25,
         page: params?.page || 1,
@@ -114,31 +93,16 @@ class ShopwareAPI {
         payload.term = params.search;
       }
 
-      console.log('📦 Products request payload:', payload);
       const response = await this.api.post('product', payload);
-      
-      console.log('📦 Raw products response:', response.data);
       const products: ShopwareProduct[] = response.data.elements || response.data.data || [];
       const total = response.data.total || 0;
-      
-      console.log('📊 Products count:', products.length);
-      console.log('📋 Products details:', products.map(prod => ({ 
-        id: prod.id, 
-        name: prod.translated?.name || prod.name, 
-        available: prod.available,
-        active: prod.active,
-        categories: prod.categories?.map(cat => cat.translated?.name || cat.name)
-      })));
-
       const transformed = products.map(this.transformProduct);
-      console.log('🔄 Transformed products:', transformed.map(p => ({ id: p.id, name: p.name, price: p.price, inStock: p.inStock })));
 
       return {
         products: transformed,
         total
       };
     } catch (error) {
-      console.error('❌ Error fetching products:', error);
       return { products: [], total: 0 };
     }
   }
@@ -159,7 +123,6 @@ class ShopwareAPI {
       const product: ShopwareProduct = response.data.data;
       return this.transformProduct(product);
     } catch (error) {
-      console.error('Error fetching product:', error);
       return null;
     }
   }
@@ -168,15 +131,7 @@ class ShopwareAPI {
    * Transform Shopware category to navigation item
    */
   private transformCategoriesToNavigation(categories: ShopwareCategory[]): NavigationItem[] {
-    console.log('🔄 Transforming categories:', categories.length);
-    
-    const filtered = categories.filter(cat => {
-      const shouldInclude = cat.active && cat.visible;
-      console.log(`Category "${cat.translated?.name || cat.name}" - active: ${cat.active}, visible: ${cat.visible}, level: ${cat.level}, included: ${shouldInclude}`);
-      return shouldInclude;
-    });
-    
-    console.log('📋 Filtered categories count:', filtered.length);
+    const filtered = categories.filter(cat => cat.active && cat.visible);
     
     return filtered.map(category => ({
       id: category.id,

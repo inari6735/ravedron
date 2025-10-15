@@ -9,7 +9,9 @@ export default function Hero() {
 
   useEffect(() => {
     if (videoRef.current) {
-      videoRef.current.play().catch(console.error);
+      videoRef.current.play().catch(() => {
+        // Video autoplay failed, ignore silently
+      });
     }
   }, []);
 
