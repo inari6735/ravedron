@@ -74,9 +74,9 @@ export default function CategoriesClient() {
       setError(null);
 
       if (selectedCategory) {
-        await categoryService.updateCategory(selectedCategory.id, data);
+        await categoryService.updateCategory(selectedCategory.id, data as UpdateCategoryRequest);
       } else {
-        await categoryService.createCategory(data);
+        await categoryService.createCategory(data as CreateCategoryRequest);
       }
 
       await loadCategories();

@@ -3,14 +3,22 @@
 import Image from "next/image";
 import { NavigationItem } from "@/types";
 import { useCart } from '@/contexts/CartContext';
+import { useCategories } from '@/hooks/useShopware';
 
 interface HeaderProps {
-  navigationItems: NavigationItem[];
+  navigationItems?: NavigationItem[]; // Made optional since we'll fetch from Shopware
 }
 
-export default function Header({ navigationItems }: HeaderProps) {
+export default function Header({ navigationItems: fallbackNavigation }: HeaderProps) {
   const { totalItems, openCart } = useCart();
+  const { categories, loading, error } = useCategories();
   const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
+
+  // Use Shopware categories if available, otherwise fallback to provided navigation
+  const navigationItems = categories.length > 0 ? [
+    { name: "ALL PRODUCTS", href: "/products" },
+    ...categories
+  ] : fallbackNavigation || [];
 
   return (
     <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800">
@@ -18,22 +26,28 @@ export default function Header({ navigationItems }: HeaderProps) {
         <div className="flex items-center">
           <Image
               src={`${basePath}/logo.png`}
-              alt="SHOPIK Logo"
+              alt="RAVEDRON Logo"
               width={120}
               height={40}
               className="h-10 w-auto"
           />
         </div>
         <div className="hidden md:flex space-x-10 absolute left-1/2 transform -translate-x-1/2">
-          {navigationItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider"
-            >
-              {item.name}
-            </a>
-          ))}
+          {loading ? (
+            <div className="text-white text-sm tracking-wider">Loading...</div>
+          ) : error ? (
+            <div className="text-red-500 text-sm tracking-wider">Navigation unavailable</div>
+          ) : (
+            navigationItems.map((item) => (
+              <a
+                key={item.id || item.name}
+                href={item.href}
+                className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider"
+              >
+                {item.name}
+              </a>
+            ))
+          )}
         </div>
         <div className="flex items-center space-x-6">
           <button className="text-white hover:text-red-500 transition-colors">

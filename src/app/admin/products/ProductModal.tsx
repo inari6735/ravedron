@@ -12,7 +12,7 @@ interface ProductModalProps {
 
 export default function ProductModal({ isOpen, onClose, onSave, product }: ProductModalProps) {
   const [formData, setFormData] = useState({
-    id: 0,
+    id: '',
     name: '',
     price: '',
     image: '',
@@ -23,7 +23,15 @@ export default function ProductModal({ isOpen, onClose, onSave, product }: Produ
 
   useEffect(() => {
     if (product) {
-      setFormData(product);
+      setFormData({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        category: product.category,
+        description: product.description || '',
+        inStock: product.inStock || true
+      });
     }
   }, [product]);
 

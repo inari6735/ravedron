@@ -1,6 +1,10 @@
+'use client'
+
+import React from 'react';
 import { Header, Footer } from '@/components';
-import { featuredProducts, navigationItems, footerSections } from '@/data';
+import { navigationItems, footerSections } from '@/data';
 import { notFound } from 'next/navigation';
+import { useProduct } from '@/hooks/useShopware';
 import ProductDetailClient from './ProductDetailClient';
 
 interface ProductDetailPageProps {
@@ -9,17 +13,25 @@ interface ProductDetailPageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  return featuredProducts.map((product) => ({
-    id: product.id.toString(),
-  }));
-}
-
-export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
-  const resolvedParams = await params;
-  const product = featuredProducts.find(p => p.id === parseInt(resolvedParams.id));
+export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+  const [resolvedParams, setResolvedParams] = React.useState<{ id: string } | null>(null);
+  const { product, loading, error } = useProduct(resolvedParams?.id || '');
   
-  if (!product) {
+  React.useEffect(() => {
+    params.then(setResolvedParams);
+  }, [params]);
+  
+  if (loading || !resolvedParams) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-xl">Loading product...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error || !product) {
     notFound();
   }
 

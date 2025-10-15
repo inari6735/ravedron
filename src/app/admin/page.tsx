@@ -1,10 +1,15 @@
-import { featuredProducts } from '@/data';
+'use client'
+
+import { useProducts, useCategories } from '@/hooks/useShopware';
 
 export default function AdminDashboard() {
-  const totalProducts = featuredProducts.length;
-  const inStockProducts = featuredProducts.filter(p => p.inStock !== false).length;
+  const { products, loading: productsLoading } = useProducts();
+  const { categories: shopwareCategories, loading: categoriesLoading } = useCategories();
+  
+  const totalProducts = products.length;
+  const inStockProducts = products.filter(p => p.inStock).length;
   const outOfStockProducts = totalProducts - inStockProducts;
-  const categories = [...new Set(featuredProducts.map(p => p.category))];
+  const categories = shopwareCategories;
 
   return (
     <div className="p-6 min-h-screen bg-black text-white">
@@ -117,33 +122,47 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {featuredProducts.slice(0, 5).map((product) => (
-                  <tr key={product.id} className="border-b border-gray-800">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-3">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-10 h-10 object-cover rounded"
-                        />
-                        <div className="font-medium text-white">{product.name}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="bg-gray-700 text-gray-300 px-2 py-1 text-xs rounded">
-                        {product.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-white font-medium">{product.price}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs rounded ${
-                        product.inStock !== false ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
-                      }`}>
-                        {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
-                      </span>
+                {productsLoading ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                      Loading products...
                     </td>
                   </tr>
-                ))}
+                ) : products.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                      No products found
+                    </td>
+                  </tr>
+                ) : (
+                  products.slice(0, 5).map((product) => (
+                    <tr key={product.id} className="border-b border-gray-800">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-3">
+                          <img 
+                            src={product.image} 
+                            alt={product.name}
+                            className="w-10 h-10 object-cover rounded"
+                          />
+                          <div className="font-medium text-white">{product.name}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="bg-gray-700 text-gray-300 px-2 py-1 text-xs rounded">
+                          {product.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-white font-medium">{product.price}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs rounded ${
+                          product.inStock ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'
+                        }`}>
+                          {product.inStock ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -154,16 +173,26 @@ export default function AdminDashboard() {
       <div>
         <h2 className="text-xl font-heading text-white mb-4">Categories Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((category) => {
-            const categoryProducts = featuredProducts.filter(p => p.category === category);
-            return (
-              <div key={category} className="bg-gray-900 border border-gray-800 p-4">
-                <h3 className="text-white font-medium mb-2">{category}</h3>
-                <div className="text-2xl font-bold text-red-400">{categoryProducts.length}</div>
-                <div className="text-gray-400 text-sm">products</div>
-              </div>
-            );
-          })}
+          {categoriesLoading ? (
+            <div className="col-span-full text-center text-gray-400 py-8">
+              Loading categories...
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="col-span-full text-center text-gray-400 py-8">
+              No categories found
+            </div>
+          ) : (
+            categories.map((category) => {
+              const categoryProducts = products.filter(p => p.category === category.name);
+              return (
+                <div key={category.id} className="bg-gray-900 border border-gray-800 p-4">
+                  <h3 className="text-white font-medium mb-2">{category.name}</h3>
+                  <div className="text-2xl font-bold text-red-400">{categoryProducts.length}</div>
+                  <div className="text-gray-400 text-sm">products</div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>

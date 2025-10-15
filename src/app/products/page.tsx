@@ -3,9 +3,10 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Header, Footer } from '@/components';
-import { featuredProducts, navigationItems, footerSections } from '@/data';
+import { navigationItems, footerSections } from '@/data';
 import { Product } from '@/types';
 import ProductCard from '@/components/ProductCard';
+import { useProducts, useCategories } from '@/hooks/useShopware';
 
 const sortOptions = [
   { value: 'name-asc', label: 'Name (A-Z)' },
@@ -14,8 +15,6 @@ const sortOptions = [
   { value: 'price-desc', label: 'Price (High to Low)' },
   { value: 'category', label: 'Category' }
 ];
-
-const categories = ['All', 'Festival Gear', 'Rave Essentials', 'Accessories', 'Outerwear'];
 
 export default function ProductsPage() {
   return (
@@ -28,24 +27,32 @@ export default function ProductsPage() {
 function ProductsContent() {
   const searchParams = useSearchParams();
   const [sortBy, setSortBy] = useState('name-asc');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [products] = useState<Product[]>(featuredProducts);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategoryName, setSelectedCategoryName] = useState('All');
+  
+  // Fetch data from Shopware
+  const { categories, loading: categoriesLoading } = useCategories();
+  const { products, loading: productsLoading, total } = useProducts({
+    categoryId: selectedCategoryId || undefined,
+    limit: 50
+  });
 
   // Handle URL parameters for category filtering
   useEffect(() => {
     const categoryParam = searchParams.get('category');
-    if (categoryParam && categories.includes(categoryParam)) {
-      setSelectedCategory(categoryParam);
+    if (categoryParam && categories.length > 0) {
+      const category = categories.find(cat => cat.id === categoryParam);
+      if (category) {
+        setSelectedCategoryId(categoryParam);
+        setSelectedCategoryName(category.name);
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, categories]);
 
-  const filteredProducts = products.filter(product => 
-    selectedCategory === 'All' || product.category === selectedCategory
-  );
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = parseFloat(a.price.replace('$', ''));
-    const priceB = parseFloat(b.price.replace('$', ''));
+  // Products are already filtered by category in the API call, so just sort them
+  const sortedProducts = [...products].sort((a, b) => {
+    const priceA = parseFloat(a.price.replace(/[^0-9.-]+/g, ''));
+    const priceB = parseFloat(b.price.replace(/[^0-9.-]+/g, ''));
 
     switch (sortBy) {
       case 'name-asc':
@@ -62,6 +69,21 @@ function ProductsContent() {
         return 0;
     }
   });
+
+  // Handle category selection
+  const handleCategorySelect = (categoryId: string | null, categoryName: string) => {
+    setSelectedCategoryId(categoryId);
+    setSelectedCategoryName(categoryName);
+    
+    // Update URL
+    const url = new URL(window.location.href);
+    if (categoryId) {
+      url.searchParams.set('category', categoryId);
+    } else {
+      url.searchParams.delete('category');
+    }
+    window.history.pushState({}, '', url);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -84,10 +106,13 @@ function ProductsContent() {
       <div className="px-6 py-8 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-heading mb-2 text-white">
-            ALL PRODUCTS
+            {selectedCategoryName === 'All' ? 'ALL PRODUCTS' : selectedCategoryName}
           </h1>
           <p className="text-gray-400 text-lg">
-            Explore our complete collection of underground fashion
+            {selectedCategoryName === 'All' 
+              ? 'Explore our complete collection of underground fashion'
+              : `Browse products in ${selectedCategoryName} category`
+            }
           </p>
         </div>
       </div>
@@ -98,19 +123,35 @@ function ProductsContent() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    selectedCategory === category
-                      ? 'bg-red-500 text-white'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+              {categoriesLoading ? (
+                <div className="text-gray-400">Loading categories...</div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleCategorySelect(null, 'All')}
+                    className={`px-4 py-2 text-sm font-medium transition-colors ${
+                      !selectedCategoryId
+                        ? 'bg-red-500 text-white'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    ALL PRODUCTS
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => handleCategorySelect(category.id!, category.name)}
+                      className={`px-4 py-2 text-sm font-medium transition-colors ${
+                        selectedCategoryId === category.id
+                          ? 'bg-red-500 text-white'
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      }`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
+                </>
+              )}
             </div>
 
             {/* Sort Options */}
@@ -140,7 +181,13 @@ function ProductsContent() {
       {/* Products Grid */}
       <div className="px-6 lg:px-8 pb-12">
         <div className="max-w-7xl mx-auto">
-          {sortedProducts.length > 0 ? (
+          {productsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-gray-800 h-64 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          ) : sortedProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {sortedProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -149,7 +196,10 @@ function ProductsContent() {
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-400 text-lg">
-                No products found in this category.
+                {selectedCategoryName === 'All' 
+                  ? 'No products available.'
+                  : `No products found in ${selectedCategoryName} category.`
+                }
               </p>
             </div>
           )}

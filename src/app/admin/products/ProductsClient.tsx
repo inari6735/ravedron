@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 import { Product } from '@/types';
+import { useProducts, useCategories } from '@/hooks/useShopware';
 import ProductModal from './ProductModal';
 
-interface ProductsClientProps {
-  initialProducts: Product[];
-}
-
-export default function ProductsClient({ initialProducts }: ProductsClientProps) {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
+export default function ProductsClient() {
+  const { products: shopwareProducts, loading: productsLoading } = useProducts();
+  const { categories: shopwareCategories, loading: categoriesLoading } = useCategories();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const categories = ['All', 'Festival Gear', 'Rave Essentials', 'Accessories', 'Outerwear'];
+  // Use Shopware products as the source of truth
+  const products = shopwareProducts;
+  const categoryNames = ['All', ...shopwareCategories.map(cat => cat.name)];
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,24 +34,16 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
     setIsModalOpen(true);
   };
 
-  const handleDeleteProduct = (productId: number) => {
+  const handleDeleteProduct = (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      setProducts(products.filter(p => p.id !== productId));
+      // TODO: Implement Shopware API delete
+      console.log('Delete product:', productId);
     }
   };
 
   const handleSaveProduct = (product: Product) => {
-    if (editingProduct) {
-      // Update existing product
-      setProducts(products.map(p => p.id === product.id ? product : p));
-    } else {
-      // Add new product
-      const newProduct = {
-        ...product,
-        id: Math.max(...products.map(p => p.id), 0) + 1
-      };
-      setProducts([...products, newProduct]);
-    }
+    // TODO: Implement Shopware API save/update
+    console.log('Save product:', product);
     setIsModalOpen(false);
     setEditingProduct(null);
   };
@@ -89,11 +81,18 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           onChange={(e) => setSelectedCategory(e.target.value)}
           className="bg-gray-900 border border-gray-800 text-white px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
-          {categories.map(category => (
+          {categoryNames.map(category => (
             <option key={category} value={category}>{category}</option>
           ))}
         </select>
       </div>
+
+      {/* Loading States */}
+      {(productsLoading || categoriesLoading) && (
+        <div className="text-center py-8 text-gray-400">
+          Loading...
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -106,7 +105,7 @@ export default function ProductsClient({ initialProducts }: ProductsClientProps)
           <div className="text-gray-400">Filtered Results</div>
         </div>
         <div className="bg-gray-900 border border-gray-800 p-4">
-          <div className="text-2xl font-bold text-white">{categories.length - 1}</div>
+          <div className="text-2xl font-bold text-white">{shopwareCategories.length}</div>
           <div className="text-gray-400">Categories</div>
         </div>
       </div>
