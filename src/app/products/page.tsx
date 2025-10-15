@@ -31,11 +31,15 @@ function ProductsContent() {
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   
   // Fetch data from Shopware
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { products, loading: productsLoading, total } = useProducts({
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
+  const { data: productsData, isLoading: productsLoading } = useProducts({
     categoryId: selectedCategoryId || undefined,
     limit: 50
   });
+
+  // Extract products from the API response
+  const products = productsData?.products || [];
+  const total = productsData?.total || 0;
 
   // Helper function to find category recursively
   const findCategoryById = (categories: any[], categoryId: string): any => {

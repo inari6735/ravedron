@@ -4,23 +4,92 @@ import Image from "next/image";
 import { NavigationItem } from "@/types";
 import { useCart } from '@/contexts/CartContext';
 import { useCategories } from '@/hooks/useShopware';
-import { useState } from 'react';
+import { useState, useMemo, memo } from 'react';
 
 interface HeaderProps {
   navigationItems?: NavigationItem[]; // Made optional since we'll fetch from Shopware
 }
 
+interface NavigationItemProps {
+  item: NavigationItem;
+  hoveredCategory: string | null;
+  setHoveredCategory: (category: string | null) => void;
+}
+
+const NavigationItemComponent = memo(({ item, hoveredCategory, setHoveredCategory }: NavigationItemProps) => {
+  const isHovered = hoveredCategory === (item.id || item.name);
+  
+  return (
+    <div
+      className="relative group"
+      style={{ zIndex: 10003 }}
+    >
+      <a
+        href={item.href}
+        className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider flex items-center"
+        onMouseEnter={() => item.children && setHoveredCategory(item.id || item.name)}
+      >
+        {item.name}
+        {item.children && item.children.length > 0 && (
+          <svg className="ml-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        )}
+      </a>
+      
+      {/* Dropdown menu */}
+      {item.children && item.children.length > 0 && isHovered && (
+        <div 
+          className="absolute top-full left-0 w-48 bg-black border border-gray-700 rounded-md shadow-lg"
+          onMouseEnter={() => setHoveredCategory(item.id || item.name)}
+          onMouseLeave={() => setHoveredCategory(null)}
+          style={{
+            marginTop: '0px', // Remove gap
+            paddingTop: '4px', // Add padding to bridge the gap
+            zIndex: 9999 // Ensure it's always on top
+          }}
+        >
+          <div className="py-2">
+            {item.children.map((child) => (
+              <a
+                key={child.id || child.name}
+                href={child.href}
+                className="block px-4 py-2 text-sm text-white hover:text-red-500 hover:bg-gray-900 transition-colors tracking-wider"
+              >
+                {child.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Invisible bridge to prevent dropdown from disappearing */}
+      {item.children && item.children.length > 0 && isHovered && (
+        <div 
+          className="absolute top-full left-0 w-48 h-1"
+          onMouseEnter={() => setHoveredCategory(item.id || item.name)}
+          style={{ zIndex: 9998 }}
+        />
+      )}
+    </div>
+  );
+});
+
+NavigationItemComponent.displayName = 'NavigationItemComponent';
+
 export default function Header({ navigationItems: fallbackNavigation }: HeaderProps) {
   const { totalItems, openCart } = useCart();
-  const { categories, loading, error } = useCategories();
+  const { data: categories = [], isLoading: loading, error } = useCategories();
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const basePath = process.env.NODE_ENV === 'production' ? 'https://inari6735.github.io/ravedron' : '';
 
   // Use Shopware categories if available, otherwise fallback to provided navigation
-  const navigationItems = categories.length > 0 ? [
-    { name: "ALL PRODUCTS", href: "/products" },
-    ...categories
-  ] : fallbackNavigation || [];
+  const navigationItems = useMemo(() => {
+    return categories.length > 0 ? [
+      { name: "ALL PRODUCTS", href: "/products" },
+      ...categories
+    ] : fallbackNavigation || [];
+  }, [categories, fallbackNavigation]);
 
   return (
     <header className="px-6 py-4 lg:px-8 bg-black border-b border-gray-800" style={{ zIndex: 10000 }}>
@@ -41,59 +110,12 @@ export default function Header({ navigationItems: fallbackNavigation }: HeaderPr
             <div className="text-red-500 text-sm tracking-wider">Navigation unavailable</div>
           ) : (
             navigationItems.map((item) => (
-              <div
+              <NavigationItemComponent 
                 key={item.id || item.name}
-                className="relative group"
-                style={{ zIndex: 10003 }}
-              >
-                <a
-                  href={item.href}
-                  className="font-heading text-white hover:text-red-500 transition-colors text-sm tracking-wider flex items-center"
-                  onMouseEnter={() => item.children && setHoveredCategory(item.id || item.name)}
-                >
-                  {item.name}
-                  {item.children && item.children.length > 0 && (
-                    <svg className="ml-1 w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </a>
-                
-                {/* Dropdown menu */}
-                {item.children && item.children.length > 0 && hoveredCategory === (item.id || item.name) && (
-                  <div 
-                    className="absolute top-full left-0 w-48 bg-black border border-gray-700 rounded-md shadow-lg"
-                    onMouseEnter={() => setHoveredCategory(item.id || item.name)}
-                    onMouseLeave={() => setHoveredCategory(null)}
-                    style={{
-                      marginTop: '0px', // Remove gap
-                      paddingTop: '4px', // Add padding to bridge the gap
-                      zIndex: 9999 // Ensure it's always on top
-                    }}
-                  >
-                    <div className="py-2">
-                      {item.children.map((child) => (
-                        <a
-                          key={child.id || child.name}
-                          href={child.href}
-                          className="block px-4 py-2 text-sm text-white hover:text-red-500 hover:bg-gray-900 transition-colors tracking-wider"
-                        >
-                          {child.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                
-                {/* Invisible bridge to prevent dropdown from disappearing */}
-                {item.children && item.children.length > 0 && hoveredCategory === (item.id || item.name) && (
-                  <div 
-                    className="absolute top-full left-0 w-48 h-1"
-                    onMouseEnter={() => setHoveredCategory(item.id || item.name)}
-                    style={{ zIndex: 9998 }}
-                  />
-                )}
-              </div>
+                item={item}
+                hoveredCategory={hoveredCategory}
+                setHoveredCategory={setHoveredCategory}
+              />
             ))
           )}
         </div>

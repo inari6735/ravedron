@@ -6,15 +6,15 @@ import { useProducts, useCategories } from '@/hooks/useShopware';
 import ProductModal from './ProductModal';
 
 export default function ProductsClient() {
-  const { products: shopwareProducts, loading: productsLoading } = useProducts();
-  const { categories: shopwareCategories, loading: categoriesLoading } = useCategories();
+  const { data: productsData, isLoading: productsLoading } = useProducts();
+  const { data: shopwareCategories = [], isLoading: categoriesLoading } = useCategories();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Use Shopware products as the source of truth
-  const products = shopwareProducts;
+  // Extract products from the API response
+  const products = productsData?.products || [];
   const categoryNames = ['All', ...shopwareCategories.map(cat => cat.name)];
 
   const filteredProducts = products.filter(product => {

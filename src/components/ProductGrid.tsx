@@ -12,8 +12,11 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({ products: fallbackProducts, title = "Featured Products", limit = 8 }: ProductGridProps) {
-  const { products: shopwareProducts, loading, error } = useProducts({ limit });
+  const { data: productsData, isLoading: loading, error } = useProducts({ limit });
   const sliderRef = useRef<HTMLDivElement>(null);
+  
+  // Extract products from the API response
+  const shopwareProducts = productsData?.products || [];
   
   // Use Shopware products if available, otherwise fallback to provided products
   const products = shopwareProducts.length > 0 ? shopwareProducts : fallbackProducts || [];

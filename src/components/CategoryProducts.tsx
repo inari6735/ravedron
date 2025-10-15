@@ -6,9 +6,12 @@ import ProductCard from "./ProductCard";
 import { useCategories, useProductsByCategory } from '@/hooks/useShopware';
 
 export default function CategoryProducts() {
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const { products, loading: productsLoading, error } = useProductsByCategory(selectedCategoryId);
+  const { data: productsData, isLoading: productsLoading, error } = useProductsByCategory(selectedCategoryId);
+
+  // Extract products from the API response
+  const products = productsData?.products || [];
 
   return (
     <section className="py-10 px-6 lg:px-8 bg-black">
