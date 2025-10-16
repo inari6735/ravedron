@@ -7,7 +7,8 @@ import {
   NavigationItem,
   ConfiguratorGroup,
   ConfiguratorOption,
-  ShopwarePropertyGroupOption
+  ShopwarePropertyGroupOption,
+  ProductVariant
 } from '@/types';
 
 class ShopwareAPI {
@@ -193,7 +194,7 @@ class ShopwareAPI {
           }
         ],
         includes: {
-          product: ['id', 'name', 'options', 'parentId'],
+          product: ['id', 'name', 'options', 'parentId', 'available', 'availableStock', 'calculatedPrice'],
           property_group_option: ['id', 'name', 'colorHexCode', 'media', 'translated', 'group'],
           property_group: ['id', 'name', 'displayType', 'translated']
         },
@@ -355,6 +356,84 @@ class ShopwareAPI {
   }
 
   /**
+   * Build variants map from Shopware products
+   */
+  private buildVariantsMap(variants: ShopwareProduct[]): ProductVariant[] {
+    const productVariants: ProductVariant[] = [];
+    
+    variants.forEach(variant => {
+      if (!variant.options) return;
+      
+      const optionsMap: { [groupId: string]: string } = {};
+      
+      variant.options.forEach(option => {
+        let groupId: string;
+        
+        // Determine group ID
+        if (option.group) {
+          groupId = option.group.id;
+        } else {
+          // Use fallback group IDs
+          const optionName = (option.translated?.name || option.name || '').toLowerCase();
+          if (this.isSizeOption(optionName)) {
+            groupId = 'size-group';
+          } else if (this.isColorOption(optionName)) {
+            groupId = 'color-group';
+          } else {
+            groupId = 'generic-options';
+          }
+        }
+        
+        optionsMap[groupId] = option.id;
+      });
+      
+      productVariants.push({
+        id: variant.id,
+        options: optionsMap,
+        available: variant.available && (variant.availableStock || 0) > 0,
+        stock: variant.availableStock || 0,
+        price: variant.calculatedPrice
+      });
+    });
+    
+    return productVariants;
+  }
+  
+  /**
+   * Calculate option availability based on selected options and available variants
+   */
+  private calculateOptionAvailability(
+    configuratorGroups: ConfiguratorGroup[],
+    availableVariants: ProductVariant[],
+    selectedOptions: { [groupId: string]: string } = {}
+  ): ConfiguratorGroup[] {
+    return configuratorGroups.map(group => ({
+      ...group,
+      options: group.options.map(option => {
+        // Check if this option is available given current selections
+        const testSelection = { ...selectedOptions, [group.id]: option.id };
+        
+        // Find variants that match this option selection
+        const matchingVariants = availableVariants.filter(variant => {
+          return Object.entries(testSelection).every(([groupId, optionId]) => {
+            return variant.options[groupId] === optionId;
+          });
+        });
+        
+        // Calculate total stock for matching variants
+        const totalStock = matchingVariants.reduce((sum, variant) => sum + variant.stock, 0);
+        const isAvailable = matchingVariants.some(variant => variant.available);
+        
+        return {
+          ...option,
+          available: isAvailable,
+          stock: totalStock
+        };
+      })
+    }));
+  }
+
+  /**
    * Build configurator groups from product data according to Shopware API structure
    */
   private async buildConfiguratorGroupsFromProduct(product: ShopwareProduct): Promise<ConfiguratorGroup[]> {
@@ -509,7 +588,17 @@ class ShopwareAPI {
           });
         });
         
-        configuratorGroups.push(...Array.from(groupMap.values()));
+        // Build variants map for availability calculation
+        const productVariants = this.buildVariantsMap(variants);
+        console.log('Built variants map:', productVariants);
+        
+        // Calculate option availability
+        const configuratorGroupsWithAvailability = this.calculateOptionAvailability(
+          Array.from(groupMap.values()),
+          productVariants
+        );
+        
+        configuratorGroups.push(...configuratorGroupsWithAvailability);
       }
       
       // Method 4: Fallback - create a generic group from product options (even without group info)

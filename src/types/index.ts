@@ -131,8 +131,10 @@ export interface ShopwareApiResponse<T> {
 export interface ConfiguratorOption {
   id: string;
   name: string;
-  colorHexCode?: string;
-  media?: string; // URL of the image
+  colorHexCode?: string | null;
+  media?: string | null;
+  available?: boolean;
+  stock?: number;
 }
 
 export interface ConfiguratorGroup {
@@ -140,6 +142,22 @@ export interface ConfiguratorGroup {
   name: string;
   displayType: 'text' | 'color' | 'image';
   options: ConfiguratorOption[];
+}
+
+// Product variant information
+export interface ProductVariant {
+  id: string;
+  options: { [groupId: string]: string }; // groupId -> optionId mapping
+  available: boolean;
+  stock: number;
+  price?: ShopwareCalculatedPrice;
+}
+
+// Configuration state for the product configurator
+export interface ConfiguratorState {
+  selectedOptions: { [groupId: string]: string }; // groupId -> optionId
+  availableVariants: ProductVariant[];
+  currentVariant?: ProductVariant;
 }
 
 // Frontend Types (converted from Shopware)
