@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import SafeImage from '@/components/SafeImage';
+import { ProductConfigurator } from '@/components';
 import { Product } from "@/types";
 
 interface ProductDetailClientProps {
@@ -16,6 +17,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [selectedColor, setSelectedColor] = useState(product.colors?.[0] || '');
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'reviews'>('description');
+  const [configuratorSelections, setConfiguratorSelections] = useState<Record<string, string>>({});
 
   const images = product.images && product.images.length > 0 ? product.images : [product.image];
   
@@ -32,6 +34,12 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   const handleAddToCart = () => {
     addItem(product, quantity, selectedSize, selectedColor);
+  };
+
+  const handleConfiguratorChange = (selections: Record<string, string>) => {
+    setConfiguratorSelections(selections);
+    // Here you could implement logic to update price, images, stock based on variant
+    console.log('Configurator selections:', selections);
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -177,6 +185,15 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Product Configurator */}
+            {product.configuratorGroups && product.configuratorGroups.length > 0 && (
+              <ProductConfigurator
+                configuratorGroups={product.configuratorGroups}
+                onSelectionChange={handleConfiguratorChange}
+                initialSelections={configuratorSelections}
+              />
             )}
 
             {/* Quantity & Add to Cart */}

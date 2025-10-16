@@ -10,3 +10,4 @@ export { default as Footer } from './Footer';
 export { default as CartPopup } from './CartPopup';
 export { default as SafeImage } from './SafeImage';
 export { default as PageLayout } from './PageLayout';
+export { default as ProductConfigurator } from './ProductConfigurator';

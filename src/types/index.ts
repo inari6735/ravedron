@@ -44,6 +44,45 @@ export interface ShopwareCategory {
   seoUrls?: any[];
 }
 
+// Product variant/configurator types
+export interface ShopwarePropertyGroupOption {
+  id: string;
+  name: string;
+  colorHexCode?: string;
+  media?: ShopwareMedia;
+  translated?: {
+    name: string;
+  };
+  group?: {
+    id: string;
+    name: string;
+    displayType?: string;
+    translated?: {
+      name: string;
+    };
+    options?: ShopwarePropertyGroupOption[];
+  };
+}
+
+export interface ShopwareConfiguratorGroup {
+  id: string;
+  name: string;
+  description?: string;
+  displayType: 'text' | 'color' | 'image';
+  sortingType: 'alphanumeric' | 'numeric' | 'position';
+  translated?: {
+    name: string;
+    description?: string;
+  };
+  options: ShopwarePropertyGroupOption[];
+}
+
+export interface ShopwareProductConfigurator {
+  groupId: string;
+  optionId: string;
+  option: ShopwarePropertyGroupOption;
+}
+
 export interface ShopwareProduct {
   id: string;
   name: string;
@@ -65,9 +104,19 @@ export interface ShopwareProduct {
   available: boolean;
   isCloseout: boolean;
   variation?: any[];
-  options?: any[];
+  options?: ShopwarePropertyGroupOption[];
   properties?: any[];
   seoUrls?: any[];
+  configuratorSettings?: ShopwareProductConfigurator[];
+  parentId?: string | null;
+  children?: ShopwareProduct[];
+  variantListingConfig?: {
+    configuratorGroupConfig: {
+      id: string;
+      optionId: string;
+      option: ShopwarePropertyGroupOption;
+    }[];
+  };
 }
 
 export interface ShopwareApiResponse<T> {
@@ -76,6 +125,21 @@ export interface ShopwareApiResponse<T> {
   aggregations?: any;
   includes?: any;
   errors?: any[];
+}
+
+// Frontend configurator types
+export interface ConfiguratorOption {
+  id: string;
+  name: string;
+  colorHexCode?: string;
+  media?: string; // URL of the image
+}
+
+export interface ConfiguratorGroup {
+  id: string;
+  name: string;
+  displayType: 'text' | 'color' | 'image';
+  options: ConfiguratorOption[];
 }
 
 // Frontend Types (converted from Shopware)
@@ -93,6 +157,7 @@ export interface Product {
   features?: string[];
   productNumber?: string;
   stock?: number;
+  configuratorGroups?: ConfiguratorGroup[]; // Product variant options
   shopwareProduct?: ShopwareProduct; // Original Shopware data
 }
 
